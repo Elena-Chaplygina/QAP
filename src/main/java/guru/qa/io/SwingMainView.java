@@ -46,17 +46,17 @@ public class SwingMainView implements MainView {
         Object[] header = getContactListHeader();
         Object[][] data = getContactListData(user);
         JTable contactsTable = new JTable(data, header);
-        contactsTable.changeSelection(0, 0, false, false);
+        contactsTable.changeSelection(initContactPosition, 0, false, false);
         contactsTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-            //понять куда кликнули
+                //понять куда кликнули
                 int rowIndex = contactsTable.rowAtPoint(e.getPoint());
                 //достать того по кому кликнули
-                int icq=getIcqNumberFromSelectedRowInTable(data,rowIndex);
-            //получить его сообщения
-                String messages=getAllMessageHistory(user,icq);
-            //отрисовать их в таблице
+                int icq = getIcqNumberFromSelectedRowInTable(data, rowIndex);
+                //получить его сообщения
+                String messages = getAllMessageHistory(user, icq);
+                //отрисовать их в таблице
                 messageHistory.setText(messages);
                 frame.revalidate();
                 frame.repaint();
@@ -64,7 +64,7 @@ public class SwingMainView implements MainView {
         });
 
 
-        messageHistory.setText(getAllMessageHistory(user, getIcqNumberFromSelectedRowInTable(data, 0)));//msges from first contact
+        messageHistory.setText(getAllMessageHistory(user, getIcqNumberFromSelectedRowInTable(data, initContactPosition)));//msges from first contact
         JLabel inputLabel = new JLabel("Ваше сообщение: ");
         JTextField inputMessageField = new JTextField(50);
 
@@ -73,7 +73,6 @@ public class SwingMainView implements MainView {
         frame.add(inputLabel);
         frame.add(inputMessageField);
 
-        int selectedIcq=getIcqNumberFromSelectedRowInTable(data,contactsTable.getSelectedRow());
 
         int selectedButton = JOptionPane.showOptionDialog(null,
                 frame,
@@ -84,14 +83,16 @@ public class SwingMainView implements MainView {
                 getWindowButtons(),
                 null);
 
-        if (selectedButton==YES_OPTION){
+        if (selectedButton == YES_OPTION) {
+            int selectedIcq = getIcqNumberFromSelectedRowInTable(data, contactsTable.getSelectedRow());
+
             String newMessage = inputMessageField.getText();
-            Message msg=new Message(newMessage,user.getIcqNumber(),selectedIcq, new Date());
+            Message msg = new Message(newMessage, user.getIcqNumber(), selectedIcq, new Date());
             messageRepository.sendMessages(msg);
             showMainFrame(user, contactsTable.getSelectedRow());
 
         } else {
-
+            messageRepository.persistData();
         }
 
     }
@@ -105,7 +106,9 @@ public class SwingMainView implements MainView {
     private String getAllMessageHistory(User user, int icqFrom) {
         return messageRepository.getAllMessages(user).stream()
                 .sorted(Comparator.comparing(Message::getCreationDate))
-                .filter(msg -> msg.getFrom() == icqFrom)
+
+
+                .filter(msg -> msg.getFrom() == icqFrom || (msg.getTo() == icqFrom && msg.getFrom() == user.getIcqNumber()))
                 .map(message -> "Сообщение от: " + message.getFrom()
                         + " (" + SDF.format(message.getCreationDate()) + "):"
                         + "\n"

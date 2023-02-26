@@ -9,20 +9,22 @@ import java.util.Optional;
 public class MockUserRepository implements UserRepository {
     @Override
     public Optional<User> findUserByUserName(String userName) {
-        final String password ="12345";
+        final String password = "12345";
         try {
-            User user0=new User("qwerty",5555, new SecurityService().calculateHash(password));
-            User user1=new User("slutikof",7777, new SecurityService().calculateHash(password));
-            User user2=new User("artem",1111, new SecurityService().calculateHash(password));
-            user0.addUsersToContactList(user1,user2);
-            if(userName.equals("qwerty")){
+            User user0 = new User("qwerty", 5555, new SecurityService().calculateHash(password));
+            User user1 = new User("slutikof", 7777, new SecurityService().calculateHash(password));
+            User user2 = new User("artem", 1111, new SecurityService().calculateHash(password));
+            user0.addUsersToContactList(user1, user2);
+            user1.addUsersToContactList(user0, user2);
+            user2.addUsersToContactList(user0, user1);
+
+            if (userName.equals("qwerty")) {
                 return Optional.of(user0);
-            } else if (userName.equals("slutikof")){
+            } else if (userName.equals("slutikof")) {
                 return Optional.of(user1);
-            }
-            else if (userName.equals("artem")){
+            } else if (userName.equals("artem")) {
                 return Optional.of(user2);
-            } else{
+            } else {
                 return Optional.empty();
             }
         } catch (NoSuchAlgorithmException e) {
