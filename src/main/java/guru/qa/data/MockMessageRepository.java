@@ -11,21 +11,24 @@ import java.util.List;
 
 public class MockMessageRepository implements MessageRepository {
     @Override
-    public void sendMessages(User user, Message message) {
+    public void sendMessages( Message message) {
 
     }
 
     @Override
     public List<Message> getAllMessages(User user) {
-//        new User("qwerty",5555, new SecurityService().calculateHash(password));
+//        qwerty  5555
 //        Stanislav 7777
 //        Artem 1111
 
 
+
+
         Message msgFromStanislav0=new Message("Привет от Стаса",7777,5555,yesterdayDate());
         Message msgFromStanislav1=new Message("Как дела?",7777,5555,yesterdayDate());
+        Message msgFromArtem0=new Message("Как настроение? ",1111,5555,yesterdayDate());
 
-        return List.of(msgFromStanislav0,msgFromStanislav1);
+        return List.of(msgFromStanislav0,msgFromArtem0,msgFromStanislav1);
     }
 
     private Date yesterdayDate (){

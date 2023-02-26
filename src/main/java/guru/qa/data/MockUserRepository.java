@@ -17,7 +17,12 @@ public class MockUserRepository implements UserRepository {
             user0.addUsersToContactList(user1,user2);
             if(userName.equals("qwerty")){
                 return Optional.of(user0);
-            } else {
+            } else if (userName.equals("slutikof")){
+                return Optional.of(user1);
+            }
+            else if (userName.equals("artem")){
+                return Optional.of(user2);
+            } else{
                 return Optional.empty();
             }
         } catch (NoSuchAlgorithmException e) {
@@ -27,6 +32,6 @@ public class MockUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findUserByIcqNumber(String userName) {
-        return Optional.empty();
+        return null;
     }
 }

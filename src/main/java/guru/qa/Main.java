@@ -1,6 +1,6 @@
 package guru.qa;
 
-import guru.qa.data.MockMessageRepository;
+import guru.qa.data.FileMessageRepository;
 import guru.qa.data.MockUserRepository;
 import guru.qa.io.SwingLoginView;
 import guru.qa.io.SwingMainView;
@@ -18,7 +18,7 @@ public class Main {
                                 new MockUserRepository()
                         )),
                 new SwingMainView(
-                        new MockMessageRepository()
+                        new FileMessageRepository()
                 )
 
         ).run();
